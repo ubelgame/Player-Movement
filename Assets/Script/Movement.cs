@@ -33,6 +33,7 @@ public class Movement : MonoBehaviour
     void Move(){
         float movez = Input.GetAxis("Vertical");
         movement = new Vector3(0, 0, movez);
+        movement = transform.TransformDirection(movement);
 
         isGrounded = Physics.CheckSphere(transform.position, groundDistance, groundMask);
 
@@ -59,19 +60,6 @@ public class Movement : MonoBehaviour
         
                 
         }
-    
-        // if(movement != Vector3.zero && !Input.GetKey(KeyCode.LeftShift)){
-        //     Walk();
-        // }
-        // else if(movement != Vector3.zero && Input.GetKey(KeyCode.LeftShift)){
-        //     Run();
-        // }
-        // else if(movement == Vector3.zero){
-        //     Idle();
-        // }
-        
-        // movement *= moveSpeed;
-        
         
         control.Move(movement * Time.deltaTime);
         depth.y += gravity * Time.deltaTime;
