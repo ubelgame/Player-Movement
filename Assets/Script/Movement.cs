@@ -18,10 +18,12 @@ public class Movement : MonoBehaviour
     private Vector3 depth;
 
     CharacterController control;
+    Animator Ani;
     // Start is called before the first frame update
     void Start()
     {
         control = GetComponent<CharacterController>();
+        Ani = GetComponentInChildren<Animator>();
     }
 
     // Update is called once per frame
@@ -52,12 +54,16 @@ public class Movement : MonoBehaviour
             Idle();
         }
         
+        
         movement *= moveSpeed;
 
         if(Input.GetKey(KeyCode.Space)){
             Jump();
         }
         
+        if(movement != Vector3.zero && Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.C)){
+            Slidetrue();
+        }
                 
         }
         
@@ -68,17 +74,24 @@ public class Movement : MonoBehaviour
 
     void Walk(){
         moveSpeed = walkSpeed;
+        Ani.SetFloat("speed", 0.5f, 0.1f, Time.deltaTime);
     }
 
     void Run(){
         moveSpeed = runSpeed; 
+        Ani.SetFloat("speed", 1f, 0.1f, Time.deltaTime);
     }
 
     void Idle(){
+        Ani.SetFloat("speed", 0, 0.1f, Time.deltaTime);
 
     }
 
     void Jump(){
         depth.y = Mathf.Sqrt(jumpDistance * -1 * gravity);
+    }
+
+    void Slidetrue(){
+        Ani.SetBool("issliding", true);
     }
 }
