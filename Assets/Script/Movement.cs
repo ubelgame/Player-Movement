@@ -43,17 +43,8 @@ public class Movement : MonoBehaviour
             depth.y = -1;
         }
         
-        if(isGrounded){
-            if(movement != Vector3.zero && !Input.GetKey(KeyCode.LeftShift)){
-            Walk();
-        }
-        else if(movement != Vector3.zero && Input.GetKey(KeyCode.LeftShift)){
-            Run();
-        }
-        else if(movement == Vector3.zero){
-            Idle();
-        }
         
+        MovementAnimation();
         
         movement *= moveSpeed;
 
@@ -61,11 +52,17 @@ public class Movement : MonoBehaviour
             Jump();
         }
         
-        if(movement != Vector3.zero && Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.C)){
+        if(movement != Vector3.zero && Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.C)){
+            Slidefalse();
+            MovementAnimation();
+        }
+        
+        else if(movement != Vector3.zero && Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.C)){
             Slidetrue();
+        
         }
                 
-        }
+        
         
         control.Move(movement * Time.deltaTime);
         depth.y += gravity * Time.deltaTime;
@@ -92,6 +89,28 @@ public class Movement : MonoBehaviour
     }
 
     void Slidetrue(){
-        Ani.SetBool("issliding", true);
+        Ani.SetBool("isSliding", true);
+    }
+
+    void Slidefalse(){
+        Ani.SetBool("isSliding", false);
+    }
+
+    void MovementAnimation(){
+         if(isGrounded)
+         {
+            if(movement != Vector3.zero && !Input.GetKey(KeyCode.LeftShift)){
+            Walk();
+        }
+        else if(movement != Vector3.zero && Input.GetKey(KeyCode.LeftShift)){
+            Run();
+        }
+        else if(movement == Vector3.zero){
+            Idle();
+        }
+        }
     }
 }
+    
+        
+
