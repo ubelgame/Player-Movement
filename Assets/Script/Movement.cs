@@ -24,6 +24,7 @@ public class Movement : MonoBehaviour
     {
         control = GetComponent<CharacterController>();
         Ani = GetComponentInChildren<Animator>();
+        
     }
 
     // Update is called once per frame
@@ -42,9 +43,17 @@ public class Movement : MonoBehaviour
         if(isGrounded && depth.y < 0){
             depth.y = -1;
         }
+
         
         
-        MovementAnimation();
+        if(movement != Vector3.zero){
+            Ani.SetBool("isMoving",true);
+            MovementAnimation();
+        }
+        else if(movement == Vector3.zero){
+            Ani.SetBool("isMoving",false);
+        }
+        
         
         movement *= moveSpeed;
 
@@ -52,15 +61,15 @@ public class Movement : MonoBehaviour
             Jump();
         }
         
-        if(movement != Vector3.zero && Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.C)){
-            Slidefalse();
-            MovementAnimation();
-        }
+        // if(movement != Vector3.zero && Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.C)){
+        //     Slidefalse();
+        //     MovementAnimation();
+        // }
         
-        else if(movement != Vector3.zero && Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.C)){
-            Slidetrue();
+        // else if(movement != Vector3.zero && Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.C)){
+        //     Slidetrue();
         
-        }
+        // }
                 
         
         
@@ -71,7 +80,7 @@ public class Movement : MonoBehaviour
 
     void Walk(){
         moveSpeed = walkSpeed;
-        Ani.SetFloat("speed", 0.5f, 0.1f, Time.deltaTime);
+        Ani.SetFloat("speed", 0f, 0.1f, Time.deltaTime);
     }
 
     void Run(){
@@ -79,35 +88,43 @@ public class Movement : MonoBehaviour
         Ani.SetFloat("speed", 1f, 0.1f, Time.deltaTime);
     }
 
-    void Idle(){
-        Ani.SetFloat("speed", 0, 0.1f, Time.deltaTime);
+    // void Idle(){
+    //     Ani.SetFloat("speed", 0, 0.1f, Time.deltaTime);
 
-    }
+    // }
 
     void Jump(){
         depth.y = Mathf.Sqrt(jumpDistance * -1 * gravity);
     }
 
-    void Slidetrue(){
-        Ani.SetBool("isSliding", true);
-    }
+    // void Slidetrue(){
+    //     Ani.SetBool("isSliding", true);
+    // }
 
-    void Slidefalse(){
-        Ani.SetBool("isSliding", false);
+    // void Slidefalse(){
+    //     Ani.SetBool("isSliding", false);
+    // }
+    // void Movetree(){
+    //     Ani.SetBool("isMoving",true);
+    // }
+
+    void Sliding(){
+        Ani.SetFloat("speed", 2f ,0.1f ,Time.deltaTime);
     }
 
     void MovementAnimation(){
-         if(isGrounded)
+         if(isGrounded )
          {
-            if(movement != Vector3.zero && !Input.GetKey(KeyCode.LeftShift)){
+            if(movement != Vector3.zero && !Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.C)){
             Walk();
         }
-        else if(movement != Vector3.zero && Input.GetKey(KeyCode.LeftShift)){
+        else if(movement != Vector3.zero && Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.C)){
             Run();
         }
-        else if(movement == Vector3.zero){
-            Idle();
+        else if(movement != Vector3.zero && Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.C)){
+            Sliding();
         }
+        
         }
     }
 }
