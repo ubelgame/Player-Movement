@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class Movement : MonoBehaviour
 {
+
+    
     // refrences
+    [SerializeField]float movez;
     [SerializeField]float moveSpeed;
     [SerializeField]float walkSpeed;
     [SerializeField]float runSpeed;
@@ -25,23 +28,39 @@ public class Movement : MonoBehaviour
         control = GetComponent<CharacterController>();
         Ani = GetComponentInChildren<Animator>();
         
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-        Move();
+        movez = Input.GetAxis("Vertical");
+        Move(movez);
     }
 
-    void Move(){
-        float movez = Input.GetAxis("Vertical");
+    void Move(float movez){
+      
         movement = new Vector3(0, 0, movez);
         movement = transform.TransformDirection(movement);
 
         isGrounded = Physics.CheckSphere(transform.position, groundDistance, groundMask);
 
         if(isGrounded && depth.y < 0){
-            depth.y = -1;
+            depth.y = -2;
+            Ani.SetBool("isGround", true);
+            Ani.SetBool("isJumping", false);
+            Ani.SetBool("isFalling", false);
+        }
+        else if(!isGrounded && depth.y < 0){
+            Ani.SetBool("isFalling", true);
+        }
+
+        // dodging movement
+        if(Input.GetKey(KeyCode.V)){
+            Ani.SetBool("isDodging", true);
+        }
+        else if(!Input.GetKey(KeyCode.V)){
+            Ani.SetBool("isDodging", false);
         }
 
         
@@ -78,14 +97,30 @@ public class Movement : MonoBehaviour
         control.Move(depth * Time.deltaTime);
     }
 
-    void Walk(){
+    void Walk(float movez){
         moveSpeed = walkSpeed;
-        Ani.SetFloat("speed", 0f, 0.1f, Time.deltaTime);
+        if(movez > 0){
+            Ani.SetFloat("speed", 0f, 0.1f, Time.deltaTime);
+            Ani.SetFloat("reverse",1.0f);
+        }
+        else if(movez < 0){
+            Ani.SetFloat("speed", 0f, 0.1f, Time.deltaTime);
+            Ani.SetFloat("reverse",-1.0f);
+        }
+        
     }
 
-    void Run(){
+    void Run(float movez){
         moveSpeed = runSpeed; 
-        Ani.SetFloat("speed", 1f, 0.1f, Time.deltaTime);
+        if(movez > 0){
+            Ani.SetFloat("speed", 1f, 0.1f, Time.deltaTime);
+            Ani.SetFloat("reverse",1.0f);
+        }
+        else if(movez < 0){
+            Ani.SetFloat("speed", 1f, 0.1f, Time.deltaTime);
+            Ani.SetFloat("reverse",-1.0f);
+        }
+        
     }
 
     // void Idle(){
@@ -95,6 +130,7 @@ public class Movement : MonoBehaviour
 
     void Jump(){
         depth.y = Mathf.Sqrt(jumpDistance * -1 * gravity);
+        Ani.SetBool("isJumping", true);
     }
 
     // void Slidetrue(){
@@ -116,10 +152,10 @@ public class Movement : MonoBehaviour
          if(isGrounded )
          {
             if(movement != Vector3.zero && !Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.C)){
-            Walk();
+            Walk(movez);
         }
         else if(movement != Vector3.zero && Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.C)){
-            Run();
+            Run(movez);
         }
         else if(movement != Vector3.zero && Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.C)){
             Sliding();

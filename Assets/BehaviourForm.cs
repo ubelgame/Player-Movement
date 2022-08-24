@@ -31,6 +31,8 @@ public class BehaviourForm : StateMachineBehaviour
             
                isBored = true;
                boredAnimation = Random.Range(1, numberOfBoredAnimations + 1);
+               boredAnimation = boredAnimation * 2 -1;
+               animator.SetFloat("BoredAnimation",boredAnimation);
   
             }
        }
@@ -42,11 +44,14 @@ public class BehaviourForm : StateMachineBehaviour
     }
 
     private void ResetIdle(){
+        if(isBored){
+            boredAnimation--;
+        }
        
         idleTime = 0;
         isBored = false;
 
-       boredAnimation = 0;
+      
        
     }
 
